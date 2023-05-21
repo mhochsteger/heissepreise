@@ -24,6 +24,7 @@ let itemsJson = "";
   const port = 3000
 
   app.use(compression());
+  app.use(express.static('site'));
 
   app.get('/api/index', (req, res) => {
     res.send(itemsJson)
