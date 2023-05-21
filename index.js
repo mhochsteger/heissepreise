@@ -1,11 +1,12 @@
 const fs = require("fs");
+const path = require("path");
 const analysis = require("./analysis");
 
 let items = [];
 let itemsJson = "";
 (async () => {
-  if (fs.existsSync("data/latest-canonical.json")) {
-    items = JSON.parse(fs.readFileSync("data/latest-canonical.json"));
+  if (fs.existsSync(path.join("data","latest-canonical.json"))) {
+    items = JSON.parse(fs.readFileSync(path.join("data","latest-canonical.json")));
     itemsJson = JSON.stringify(items)
     analysis.updateData("data", newItems => {
       items = newItems;

@@ -1,4 +1,5 @@
 const fs = require("fs");
+const path = require("path");
 const axios = require("axios")
 
 function currentDate() {
@@ -191,29 +192,29 @@ exports.updateData = async function (dataDir, done) {
 
     let start = performance.now();
     const sparItems = (await axios.get(SPAR_SEARCH)).data.hits;
-    fs.writeFileSync(`${dataDir}/spar-${today}.json`, JSON.stringify(sparItems, null, 2));
+    fs.writeFileSync(`${dataDir}${path.sep}spar-${today}.json`, JSON.stringify(sparItems, null, 2));
     const sparItemsCanonical = sparToCanonical(sparItems, today);
     console.log("Fetched SPAR data, took " + (performance.now() - start) / 1000 + " seconds");
 
     start = performance.now();
     const billaItems = (await axios.get(BILLA_SEARCH)).data.tiles;
-    fs.writeFileSync(`${dataDir}/billa-${today}.json`, JSON.stringify(billaItems, null, 2));
+    fs.writeFileSync(`${dataDir}${path.sep}billa-${today}.json`, JSON.stringify(billaItems, null, 2));
     const billaItemsCanonical = billaToCanonical(billaItems, today);
     console.log("Fetched BILLA data, took " + (performance.now() - start) / 1000 + " seconds");
 
     start = performance.now();
     const hoferItems = await fetchHofer();
-    fs.writeFileSync(`${dataDir}/hofer-${today}.json`, JSON.stringify(hoferItems, null, 2));
+    fs.writeFileSync(`${dataDir}${path.sep}hofer-${today}.json`, JSON.stringify(hoferItems, null, 2));
     const hoferItemsCanonical = hoferToCanonical(hoferItems, today);
     console.log("Fetched HOFER data, took " + (performance.now() - start) / 1000 + " seconds");
 
     const items = [...billaItemsCanonical, ...sparItemsCanonical, ...hoferItemsCanonical];
-    if (fs.existsSync(`${dataDir}/latest-canonical.json`)) {
+    if (fs.existsSync(`${dataDir}${path.sep}latest-canonical.json`)) {
         const oldItems = JSON.parse(fs.readFileSync(`${dataDir}/latest-canonical.json`));
         mergePriceHistory(oldItems, items);
         console.log("Merged price history");
     }
-    fs.writeFileSync(`${dataDir}/latest-canonical.json`, JSON.stringify(items, null, 2));
+    fs.writeFileSync(`${dataDir}${path.sep}latest-canonical.json`, JSON.stringify(items, null, 2));
 
     if (done) done(items);
     return items;
